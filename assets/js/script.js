@@ -16,6 +16,7 @@ const getVideoInfo = () => {
 
   $.post('/get-video-info', { url }).then(({ videos, audios, videoDetails }) => {
 
+    $('#error-section').hide()
     toggleLoadingState()
 
     let { thumbnails } = videoDetails
