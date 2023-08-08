@@ -42,6 +42,11 @@ const getVideoInfo = () => {
         Audio
       </a>
     `)
+  }).catch(err => {
+    if (err.status == 404) {
+      $('#error-section').show()
+      toggleLoadingState()
+    }
   })
 }
 

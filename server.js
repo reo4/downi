@@ -30,12 +30,17 @@ app.get('/download', (req, res) => {
 
 app.post('/get-video-info', (req, res) => {
   let url = req.body.url
-  ytdl.getInfo(url).then((info) => {
-    let videos = ytdl.filterFormats(info.formats, 'videoandaudio');
-    let audios = ytdl.filterFormats(info.formats, 'audioonly');
+  if (ytdl.validateURL(url)) {
+    ytdl.getInfo(url).then((info) => {
+      let videos = ytdl.filterFormats(info.formats, 'videoandaudio');
+      let audios = ytdl.filterFormats(info.formats, 'audioonly');
 
-    res.send({ videos, audios, videoDetails: info.videoDetails })
-  })
+      res.send({ videos, audios, videoDetails: info.videoDetails })
+    })
+  }
+  else {
+    res.status(404).send('Link is invalid')
+  }
 
 })
 
