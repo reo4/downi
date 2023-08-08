@@ -193,7 +193,13 @@ footer {
   padding: 80px 0;
   background-color: white;
   border-top: 1px solid #e4eaf3;
-  margin-top: 280px;
+}
+
+footer.fixed {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 0;
 }
 
 footer ul {

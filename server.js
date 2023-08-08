@@ -16,6 +16,20 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, './index.html'))
 })
 
+app.get('/privacy-policy', (req, res) => {
+  res.sendFile(path.join(__dirname, './privacy.html'))
+})
+
+app.get('/about-us', (req, res) => {
+  res.sendFile(path.join(__dirname, './about-us.html'))
+})
+app.get('/terms-of-use', (req, res) => {
+  res.sendFile(path.join(__dirname, './terms-of-use.html'))
+})
+app.get('/contact-us', (req, res) => {
+  res.sendFile(path.join(__dirname, './contact-us.html'))
+})
+
 
 
 app.get('/download', (req, res) => {
