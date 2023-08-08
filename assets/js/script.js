@@ -45,6 +45,7 @@ const getVideoInfo = () => {
     `)
   }).catch(err => {
     if (err.status == 404) {
+      $('#video-download').removeClass('show')
       $('#error-section').show()
       toggleLoadingState()
     }
