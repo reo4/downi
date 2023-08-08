@@ -5,6 +5,7 @@ let downloadIcon = $('.fa-download')
 const toggleLoadingState = () => {
   loadingIcon.toggle()
   downloadIcon.toggle()
+  document.querySelector('#download-btn').toggleAttribute('disabled')
 }
 
 const getVideoInfo = () => {
