@@ -31,14 +31,14 @@ const getVideoInfo = () => {
     $('#video-download .formats-box .quality-btn').remove()
     videos.forEach(video => {
       $('#video-download .formats-box').append(`
-        <a href="${video.url}" class="quality-btn" download>
+        <a href="${video.url}" class="quality-btn" download target="_blank">
           <i class="fa-solid fa-photo-film"></i>
           ${video.qualityLabel}
         </a>
       `)
     })
     $('#video-download .formats-box').append(`
-      <a href="${audio.url}" class="quality-btn" download>
+      <a href="${audio.url}" class="quality-btn" download target="_blank">
         <i class="fa-solid fa-music"></i>
         Audio
       </a>
