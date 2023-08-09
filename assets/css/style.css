@@ -59,6 +59,10 @@ button {
   font-weight: bold;
 }
 
+.logo img {
+  margin-right: 7px;
+}
+
 .description {
   text-align: center;
   margin-top: 30px;
