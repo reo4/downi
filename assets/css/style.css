@@ -239,3 +239,12 @@ footer .footer-wrapper {
     justify-content: unset;
   }
 }
+
+#ad-container {
+  display: flex;
+  justify-content: center;
+}
+
+iframe {
+  margin: 40px 5px;
+}
