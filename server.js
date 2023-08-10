@@ -50,39 +50,40 @@ app.post('/get-video-info', (req, res) => {
     };
 
     request(options, function (error, response) {
-      if (error) {
-        res.status(404).send('Link is invalid')
-      };
-
       const $ = cheerio.load(response.body)
-
       const title = $('.card-title a').html()
 
-      const backgroundImg = $('.img-video').css('background-image')
+      if (error || !title) {
+        res.status(404).send('Link is invalid')
+      }
+      else {
+        const backgroundImg = $('.img-video').css('background-image')
 
-      const matchBetweenParentheses = /\(([^)]+)\)/;
+        const matchBetweenParentheses = /\(([^)]+)\)/;
 
-      const thumbnail = backgroundImg.match(matchBetweenParentheses)[1]
+        const thumbnail = backgroundImg.match(matchBetweenParentheses)[1]
 
-      const rgx = /<a href="(.+?)" target="_blank" class="btn btn-download"(.+?)>(.+?)<\/a>/g
-      let arr = [...response.body.matchAll(rgx)]
-      let videos = [];
+        const rgx = /<a href="(.+?)" target="_blank" class="btn btn-download"(.+?)>(.+?)<\/a>/g
+        let arr = [...response.body.matchAll(rgx)]
+        let videos = [];
 
-      arr.map((item, i) => {
-        if (i == 0) {
-          if (item[3].match('<strong>HD</strong>')) {
-            item[3] = "Download in HD Quality"
+        arr.map((item, i) => {
+          if (i == 0) {
+            if (item[3].match('<strong>HD</strong>')) {
+              item[3] = "Download in HD Quality"
+            }
+
           }
 
-        }
-
-        videos.push({
-          qualityLabel: item[3],
-          url: item[1].replace(/amp;/gi, '')
+          videos.push({
+            qualityLabel: item[3],
+            url: item[1].replace(/amp;/gi, '')
+          })
         })
-      })
 
-      res.send({ videos, videoDetails: { title, thumbnails: [{ url: thumbnail }] } })
+        res.send({ videos, videoDetails: { title, thumbnails: [{ url: thumbnail }] } })
+      }
+
     });
   }
 })
