@@ -19,14 +19,21 @@ const getVideoInfo = () => {
     $('#error-section').hide()
     toggleLoadingState()
 
-    let { thumbnails } = videoDetails
-    let thumbnail = thumbnails[thumbnails.length - 1].url
-    let audio = audios[0]
-
     $('#video-download').addClass('show')
 
-    $('#video-download .img-box').css('background-image', `url(${thumbnail})`)
     $('#video-title').html(videoDetails.title)
+
+    let thumbnail;
+
+    if (videoDetails.thumbnail) {
+      thumbnail = videoDetails.thumbnail
+      $('#video-download .img-box').css('background-image', `${thumbnail}`)
+    }
+    else {
+      let { thumbnails } = videoDetails
+      thumbnail = thumbnails[thumbnails.length - 1].url
+      $('#video-download .img-box').css('background-image', `url(${thumbnail})`)
+    }
 
     $('#video-download .formats-box .quality-btn').remove()
     videos.forEach(video => {
@@ -37,12 +44,16 @@ const getVideoInfo = () => {
         </a>
       `)
     })
-    $('#video-download .formats-box').append(`
-      <a href="${audio.url}" class="quality-btn" download target="_blank">
-        <i class="fa-solid fa-music"></i>
-        Audio
-      </a>
-    `)
+
+    if (audios) {
+      $('#video-download .formats-box').append(`
+        <a href="${audios[0].url}" class="quality-btn" download target="_blank">
+          <i class="fa-solid fa-music"></i>
+          Audio
+        </a>
+      `)
+    }
+
   }).catch(err => {
     if (err.status == 404) {
       $('#video-download').removeClass('show')

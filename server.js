@@ -1,8 +1,10 @@
 var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser')
-const https = require('https');
+const request = require('request');
+const fs = require('fs');
 const ytdl = require('ytdl-core');
+const cheerio = require('cheerio')
 
 app = express()
 
@@ -15,11 +17,9 @@ app.use(bodyParser.json());
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, './index.html'))
 })
-
 app.get('/privacy-policy', (req, res) => {
   res.sendFile(path.join(__dirname, './privacy.html'))
 })
-
 app.get('/about-us', (req, res) => {
   res.sendFile(path.join(__dirname, './about-us.html'))
 })
@@ -28,18 +28,6 @@ app.get('/terms-of-use', (req, res) => {
 })
 app.get('/contact-us', (req, res) => {
   res.sendFile(path.join(__dirname, './contact-us.html'))
-})
-
-
-
-app.get('/download', (req, res) => {
-  let url = req.query.url
-  const request = https.get(url, readable => {
-
-    readable.on('', () => {
-      res.download(readable)
-    })
-  })
 })
 
 app.post('/get-video-info', (req, res) => {
@@ -53,7 +41,45 @@ app.post('/get-video-info', (req, res) => {
     })
   }
   else {
-    res.status(404).send('Link is invalid')
+    let options = {
+      'method': 'POST',
+      'url': 'https://www.getfvid.com/downloader',
+      formData: {
+        url
+      }
+    };
+
+    request(options, function (error, response) {
+      if (error) {
+        res.status(404).send('Link is invalid')
+      };
+
+      const $ = cheerio.load(response.body)
+
+      const title = $('.card-title a').html()
+
+      const thumbnail = $('.img-video').css('background-image')
+
+      const rgx = /<a href="(.+?)" target="_blank" class="btn btn-download"(.+?)>(.+?)<\/a>/g
+      let arr = [...response.body.matchAll(rgx)]
+      let videos = [];
+
+      arr.map((item, i) => {
+        if (i == 0) {
+          if (item[3].match('<strong>HD</strong>')) {
+            item[3] = "Download in HD Quality"
+          }
+
+        }
+
+        videos.push({
+          qualityLabel: item[3],
+          url: item[1].replace(/amp;/gi, '')
+        })
+      })
+
+      res.send({ videos, videoDetails: { title, thumbnail } })
+    });
   }
 })
 
