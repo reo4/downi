@@ -31,6 +31,7 @@ app.get('/contact-us', (req, res) => {
 })
 
 app.post('/get-video-info', (req, res) => {
+  // youtube
   let url = req.body.url
   if (ytdl.validateURL(url)) {
     ytdl.getInfo(url).then((info) => {
@@ -41,6 +42,7 @@ app.post('/get-video-info', (req, res) => {
     })
   }
   else {
+    // fb
     let options = {
       'method': 'POST',
       'url': 'https://www.getfvid.com/downloader',
@@ -52,12 +54,7 @@ app.post('/get-video-info', (req, res) => {
     request(options, function (error, response) {
       const $ = cheerio.load(response.body)
       let title = $('.card-title a').html()
-
-      if (error || !title) {
-        res.status(404).send('Link is invalid')
-        res.end()
-      }
-      else {
+      if (!error && title) {
 
         title = title.split('app-').shift()
 
@@ -76,9 +73,7 @@ app.post('/get-video-info', (req, res) => {
             if (item[3].match('<strong>HD</strong>')) {
               item[3] = "Download in HD Quality"
             }
-
           }
-
           videos.push({
             qualityLabel: item[3],
             url: item[1].replace(/amp;/gi, '')
@@ -86,6 +81,10 @@ app.post('/get-video-info', (req, res) => {
         })
 
         res.send({ videos, videoDetails: { title, thumbnails: [{ url: thumbnail }] } })
+
+      }
+      else {
+        res.status(404).send('Link is invalid')
       }
 
     });
