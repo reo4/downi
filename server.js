@@ -51,13 +51,16 @@ app.post('/get-video-info', (req, res) => {
 
     request(options, function (error, response) {
       const $ = cheerio.load(response.body)
-      const title = $('.card-title a').html()
+      let title = $('.card-title a').html()
 
       if (error || !title) {
         res.status(404).send('Link is invalid')
         res.end()
       }
       else {
+
+        title = title.split('app-').shift()
+
         const backgroundImg = $('.img-video').css('background-image')
 
         const matchBetweenParentheses = /\(([^)]+)\)/;
