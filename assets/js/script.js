@@ -23,17 +23,9 @@ const getVideoInfo = () => {
 
     $('#video-title').html(videoDetails.title)
 
-    let thumbnail;
-
-    if (videoDetails.thumbnail) {
-      thumbnail = videoDetails.thumbnail
-      $('#video-download .img-box').css('background-image', `${thumbnail}`)
-    }
-    else {
-      let { thumbnails } = videoDetails
-      thumbnail = thumbnails[thumbnails.length - 1].url
-      $('#video-download .img-box').css('background-image', `url(${thumbnail})`)
-    }
+    let { thumbnails } = videoDetails
+    let thumbnail = thumbnails[thumbnails.length - 1].url
+    $('#video-download .img-box').css('background-image', `url(${thumbnail})`)
 
     $('#video-download .formats-box .quality-btn').remove()
     videos.forEach(video => {

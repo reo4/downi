@@ -58,7 +58,11 @@ app.post('/get-video-info', (req, res) => {
 
       const title = $('.card-title a').html()
 
-      const thumbnail = $('.img-video').css('background-image')
+      const backgroundImg = $('.img-video').css('background-image')
+
+      const matchBetweenParentheses = /\(([^)]+)\)/;
+
+      const thumbnail = backgroundImg.match(matchBetweenParentheses)[1]
 
       const rgx = /<a href="(.+?)" target="_blank" class="btn btn-download"(.+?)>(.+?)<\/a>/g
       let arr = [...response.body.matchAll(rgx)]
@@ -78,7 +82,7 @@ app.post('/get-video-info', (req, res) => {
         })
       })
 
-      res.send({ videos, videoDetails: { title, thumbnail } })
+      res.send({ videos, videoDetails: { title, thumbnails: [{ url: thumbnail }] } })
     });
   }
 })
