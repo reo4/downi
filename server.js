@@ -55,6 +55,7 @@ app.post('/get-video-info', (req, res) => {
 
       if (error || !title) {
         res.status(404).send('Link is invalid')
+        res.end()
       }
       else {
         const backgroundImg = $('.img-video').css('background-image')
