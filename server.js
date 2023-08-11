@@ -53,9 +53,17 @@ app.post('/get-video-info', (req, res) => {
     };
     request(options, function (error, response) {
 
-      if (error) res.status(404).send('Link is invalid');
+      if (error) throw new Error(error);
+
+      let private = response.body.match(/Uh-Oh! This video might be private and not publi/g)
+
+      if (private) {
+        res.status(404).send('This video might be private')
+        return
+      }
 
       const $ = cheerio.load(response.body)
+
       let title = $('.card-title a').html()
 
       if (title) {
@@ -88,6 +96,7 @@ app.post('/get-video-info', (req, res) => {
 
       }
       else {
+        // instagram
         res.status(404).send('Link is invalid')
       }
 
