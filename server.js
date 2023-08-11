@@ -2,7 +2,7 @@ var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser')
 const request = require('request');
-const fs = require('fs');
+const axios = require('axios');
 const ytdl = require('ytdl-core');
 const cheerio = require('cheerio')
 
@@ -96,8 +96,13 @@ app.post('/get-video-info', (req, res) => {
 
       }
       else {
-        // instagram
-        res.status(404).send('Link is invalid')
+        //instagram
+        // axios.get(`https://savefrom.uk/search?url=${url}`).then(({ data }) => {
+        // const $ = cheerio.load(data)
+        // let title = $('.video_files a').first().attr('title')
+        // let url = $('.video_files a').first().        
+        // })
+        res.status(404).send('Link is Invalid')
       }
 
     });
