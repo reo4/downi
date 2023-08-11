@@ -193,10 +193,6 @@ button {
   margin-bottom: 100px;
 }
 
-#contact-us {
-  display: flex;
-}
-
 #contact-us form {
   margin-left: 70px;
 }
@@ -249,7 +245,8 @@ iframe {
 
 @media (max-width: 540px) {
   .container {
-    padding: 0 6px;
+    padding: 0 2px;
+    text-align: center;
   }
   #download-btn {
     width: 50px;
@@ -304,7 +301,7 @@ iframe {
 
   footer .footer-wrapper {
     flex-direction: column;
-    align-items: unset;
+    align-items: center;
     justify-content: unset;
   }
 }
