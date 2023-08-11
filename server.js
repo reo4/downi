@@ -33,6 +33,7 @@ app.get('/contact-us', (req, res) => {
 app.post('/get-video-info', (req, res) => {
   // youtube
   let url = req.body.url
+
   if (ytdl.validateURL(url)) {
     ytdl.getInfo(url).then((info) => {
       let videos = ytdl.filterFormats(info.formats, 'videoandaudio');
@@ -50,8 +51,10 @@ app.post('/get-video-info', (req, res) => {
         url
       }
     };
-
     request(options, function (error, response) {
+
+      if (error) res.status(404).send('Link is invalid');
+
       const $ = cheerio.load(response.body)
       let title = $('.card-title a').html()
 
