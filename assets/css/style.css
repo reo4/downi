@@ -244,6 +244,9 @@ iframe {
 }
 
 @media (max-width: 540px) {
+  .container {
+    padding: 0 6px;
+  }
   #download-btn {
     width: 50px;
     height: 60px;
@@ -260,7 +263,7 @@ iframe {
   #url-input {
     height: 60px;
     padding: 10px;
-    font-size: 13px;
+    font-size: 15px;
   }
 
   #ad-container {
