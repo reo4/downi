@@ -240,6 +240,7 @@ footer .footer-wrapper {
 iframe {
   margin: 40px 0;
   padding: 0 2px;
+  box-sizing: border-box;
 }
 
 @media (max-width: 540px) {
