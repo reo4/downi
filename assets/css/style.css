@@ -226,6 +226,10 @@ footer ul li {
   margin-left: 30px;
 }
 
+footer ul li a {
+  display: inline-block;
+}
+
 footer .footer-wrapper {
   display: flex;
   justify-content: space-between;
