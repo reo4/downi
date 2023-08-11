@@ -232,7 +232,28 @@ footer .footer-wrapper {
   align-items: center;
 }
 
+#ad-container {
+  display: flex;
+  justify-content: center;
+}
+
+iframe {
+  margin: 40px 5px;
+}
+
 @media (max-width: 540px) {
+  #ad-container {
+    flex-direction: column;
+  }
+
+  .navbar {
+    justify-content: center;
+  }
+
+  .navbar ul {
+    display: none;
+  }
+
   footer ul {
     flex-direction: column;
   }
@@ -250,13 +271,4 @@ footer .footer-wrapper {
     align-items: unset;
     justify-content: unset;
   }
-}
-
-#ad-container {
-  display: flex;
-  justify-content: center;
-}
-
-iframe {
-  margin: 40px 5px;
 }
