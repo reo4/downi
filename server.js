@@ -54,7 +54,8 @@ app.post('/get-video-info', (req, res) => {
     request(options, function (error, response) {
       const $ = cheerio.load(response.body)
       let title = $('.card-title a').html()
-      if (!error && title) {
+
+      if (title) {
 
         title = title.split('app-').shift()
 
