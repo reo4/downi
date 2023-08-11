@@ -238,12 +238,39 @@ footer .footer-wrapper {
 }
 
 iframe {
-  margin: 40px 5px;
+  margin: 40px 0;
+  padding: 0 2px;
 }
 
 @media (max-width: 540px) {
+  #download-btn {
+    width: 50px;
+    height: 60px;
+    font-size: 20px;
+  }
+
+  #clear-btn {
+    width: 50px;
+    height: 60px;
+    font-size: 20px;
+    right: 50px;
+  }
+
+  #url-input {
+    height: 60px;
+    padding: 10px;
+    font-size: 13px;
+  }
+
   #ad-container {
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  #ad-container iframe {
+    margin: unset;
+    margin-top: 20px;
+    padding: 0 2px;
   }
 
   .navbar {
