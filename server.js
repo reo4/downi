@@ -122,9 +122,7 @@ app.post('/get-video-info', (req, res) => {
 
         await page.setViewport({ width: 1080, height: 1024 });
 
-        await page.waitForSelector('input[name="url"]', {
-          timeout: 60000,
-        })
+        await page.waitForSelector('input[name="url"]')
 
         await page.type('input[name="url"]', url);
 
