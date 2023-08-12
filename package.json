@@ -19,6 +19,8 @@
     "puppeteer": "^21.0.3",
     "request": "^2.88.2",
     "user-agents": "^1.0.1444",
-    "ytdl-core": "^4.11.5"
+    "ytdl-core": "^4.11.5",
+    "chrome-aws-lambda": "^6",
+    "puppeteer-core": "^6"
   }
 }

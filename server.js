@@ -2,11 +2,20 @@ var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser')
 const ytdl = require('ytdl-core');
-const puppeteer = require('puppeteer')
 var userAgent = require('user-agents')
 const cheerio = require('cheerio')
 const request = require('request');
 const axios = require('axios');
+
+let chrome = {};
+let puppeteer;
+
+if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+  chrome = require('chrome-aws-lambda');
+  puppeteer = require('puppeteer-core');
+} else {
+  puppeteer = require('puppeteer');
+}
 
 app = express()
 
@@ -96,6 +105,16 @@ app.post('/get-video-info', (req, res) => {
 
       }
       else {
+        let option = {}
+        if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+          options = {
+            args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
+            defaultViewport: chromium.defaultViewport,
+            executablePath: await chromium.executablePath,
+            headless: true,
+            ignoreHTTPSErrors: true,
+          }
+        }
         const browser = await puppeteer.launch()
         const page = await browser.newPage();
 
