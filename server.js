@@ -155,7 +155,7 @@ app.post('/get-video-info', (req, res) => {
           }
         })
       } catch (error) {
-        res.status(404).send('Link is Invalid')
+        res.status(404).send(error)
       }
 
     })
