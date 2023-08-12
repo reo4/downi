@@ -11,6 +11,11 @@ let chrome = {};
 
 if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
   chrome = require('chrome-aws-lambda');
+  const puppeteer = require('puppeteer-core');
+}
+else {
+  const puppeteer = require('puppeteer');
+
 }
 
 app = express()
@@ -111,6 +116,8 @@ app.post('/get-video-info', (req, res) => {
 
         await page.goto('https://snapinsta.app/')
 
+        console.log(await page.content())
+
         await page.setViewport({ width: 1080, height: 1024 });
 
         await page.waitForSelector('input[name="url"]', {
@@ -135,7 +142,7 @@ app.post('/get-video-info', (req, res) => {
         );
 
         const videoUrl = await video?.evaluate(el => el.getAttribute('href'));
-        console.log('The title of this blog post is "%s".', videoUrl);
+        // console.log('The title of this blog post is "%s".', videoUrl);
 
         await browser.close();
 
