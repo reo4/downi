@@ -5,17 +5,18 @@ const ytdl = require('ytdl-core');
 var userAgent = require('user-agents')
 const cheerio = require('cheerio')
 const axios = require('axios');
+const puppeteer = require('puppeteer');
 
-let chrome = {};
+// let chrome = {};
 
-if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
-  chrome = require('chrome-aws-lambda');
-  const puppeteer = require('puppeteer-core');
-}
-else {
-  const puppeteer = require('puppeteer');
+// if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+//   chrome = require('chrome-aws-lambda');
+//   const puppeteer = require('puppeteer-core');
+// }
+// else {
+//   const puppeteer = require('puppeteer');
 
-}
+// }
 
 app = express()
 
@@ -100,17 +101,17 @@ app.post('/get-video-info', (req, res) => {
     }).catch(async err => {
       // instagram
       try {
-        let options = {}
-        if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
-          options = {
-            args: [...chrome.args, "--hide-scrollbars", "--disable-web-security"],
-            defaultViewport: chrome.defaultViewport,
-            executablePath: await chrome.executablePath,
-            headless: true,
-            ignoreHTTPSErrors: true,
-          }
-        }
-        const browser = await puppeteer.launch(options)
+        // let options = {}
+        // if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+        //   options = {
+        //     args: [...chrome.args, "--hide-scrollbars", "--disable-web-security"],
+        //     defaultViewport: chrome.defaultViewport,
+        //     executablePath: await chrome.executablePath,
+        //     headless: true,
+        //     ignoreHTTPSErrors: true,
+        //   }
+        // }
+        const browser = await puppeteer.launch()
         const page = await browser.newPage();
 
         await page.setUserAgent(userAgent.random().toString())
