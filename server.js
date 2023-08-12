@@ -1,17 +1,18 @@
 var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser')
+const ytdl = require('ytdl-core');
+const puppeteer = require('puppeteer')
+var userAgent = require('user-agents')
+const cheerio = require('cheerio')
 const request = require('request');
 const axios = require('axios');
-const ytdl = require('ytdl-core');
-const cheerio = require('cheerio')
 
 app = express()
 
 app.use('/assets', express.static(path.join(__dirname, './assets')))
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
-
 
 
 app.get('/', (req, res) => {
@@ -33,7 +34,6 @@ app.get('/contact-us', (req, res) => {
 app.post('/get-video-info', (req, res) => {
   // youtube
   let url = req.body.url
-
   if (ytdl.validateURL(url)) {
     ytdl.getInfo(url).then((info) => {
       let videos = ytdl.filterFormats(info.formats, 'videoandaudio');
@@ -51,7 +51,7 @@ app.post('/get-video-info', (req, res) => {
         url
       }
     };
-    request(options, function (error, response) {
+    request(options, async function (error, response) {
 
       if (error) throw new Error(error);
 
@@ -96,15 +96,51 @@ app.post('/get-video-info', (req, res) => {
 
       }
       else {
-        //instagram
-        // axios.get(`https://savefrom.uk/search?url=${url}`).then(({ data }) => {
-        // const $ = cheerio.load(data)
-        // let title = $('.video_files a').first().attr('title')
-        // let url = $('.video_files a').first().        
-        // })
-        res.status(404).send('Link is Invalid')
-      }
+        const browser = await puppeteer.launch()
+        const page = await browser.newPage();
 
+        await page.setUserAgent(userAgent.random().toString())
+
+        await page.goto('https://snapinsta.app/')
+
+        await page.setViewport({ width: 1080, height: 1024 });
+
+        await page.waitForSelector('input[name="url"]', {
+          timeout: 100000
+        })
+
+        await page.screenshot({ path: './assets/img/screenshot.png' })
+
+        await page.type('input[name="url"]', url);
+
+        const searchResultSelector = '#downloader button[type="submit"]';
+
+        await page.waitForSelector(searchResultSelector);
+
+        await page.click(searchResultSelector);
+
+        const thumbnail = await page.waitForSelector(
+          '#download .media-box img'
+        );
+        const thumbnailUrl = await thumbnail?.evaluate(el => el.getAttribute('src'));
+
+        const video = await page.waitForSelector(
+          'a[data-event="click_download_btn"]'
+        );
+
+        const videoUrl = await video?.evaluate(el => el.getAttribute('href'));
+        console.log('The title of this blog post is "%s".', videoUrl);
+
+        await browser.close();
+
+        res.send({
+          videos: [{ url: videoUrl, qualityLabel: 'mp4' }],
+          videoDetails: {
+            title: '',
+            thumbnails: [{ url: thumbnailUrl }]
+          }
+        })
+      }
     });
   }
 })
