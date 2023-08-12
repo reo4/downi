@@ -118,10 +118,6 @@ app.post('/get-video-info', (req, res) => {
 
         await page.goto('https://snapinsta.app/')
 
-        console.log(await page.content())
-
-        await page.setViewport({ width: 1080, height: 1024 });
-
         await page.waitForSelector('input[name="url"]')
 
         await page.type('input[name="url"]', url);
