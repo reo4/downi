@@ -94,7 +94,9 @@ app.post('/get-video-info', (req, res) => {
         console.log('instagram')
 
         const browser = await puppeteer.launch({
-          headless: false
+          args: ["--hide-scrollbars", "--disable-web-security"],
+          headless: false,
+          ignoreHTTPSErrors: true,
         })
         const page = await browser.newPage();
 
