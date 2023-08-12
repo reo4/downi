@@ -243,7 +243,21 @@ iframe {
   box-sizing: border-box;
 }
 
+.show-on-mobile {
+  display: none;
+}
+
+.hide-on-mobile {
+  display: block;
+}
+
 @media (max-width: 540px) {
+  .show-on-mobile {
+    display: block;
+  }
+  .hide-on-mobile {
+    display: none;
+  }
   .container {
     padding: 0 2px;
     text-align: center;
