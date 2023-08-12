@@ -104,7 +104,7 @@ app.post('/get-video-info', (req, res) => {
 
     }).catch(async err => {
       try {
-        let option = {}
+        let options = {}
         if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
           options = {
             args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
@@ -114,7 +114,7 @@ app.post('/get-video-info', (req, res) => {
             ignoreHTTPSErrors: true,
           }
         }
-        const browser = await puppeteer.launch()
+        const browser = await puppeteer.launch(options)
         const page = await browser.newPage();
 
         await page.setUserAgent(userAgent.random().toString())
