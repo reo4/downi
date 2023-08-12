@@ -128,8 +128,6 @@ app.post('/get-video-info', (req, res) => {
           timeout: 100000
         })
 
-        await page.screenshot({ path: './assets/img/screenshot.png' })
-
         await page.type('input[name="url"]', url);
 
         const searchResultSelector = '#downloader button[type="submit"]';
