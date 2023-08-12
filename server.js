@@ -4,7 +4,6 @@ var bodyParser = require('body-parser')
 const ytdl = require('ytdl-core');
 var userAgent = require('user-agents')
 const cheerio = require('cheerio')
-const request = require('request');
 const axios = require('axios');
 
 let chrome = {};
@@ -53,25 +52,23 @@ app.post('/get-video-info', (req, res) => {
   }
   else {
     // fb
-    let options = {
-      'method': 'POST',
-      'url': 'https://www.getfvid.com/downloader',
-      formData: {
-        url
-      }
-    };
-    request(options, async function (error, response) {
+    // let options = {
+    //   'method': 'POST',
+    //   'url': '',
+    //   formData: {
+    //     url
+    //   }
+    // };
+    axios.post('https://www.getfvid.com/downloader', { url }).then(async function (response) {
 
-      if (error) throw new Error(error);
-
-      let private = response.body.match(/Uh-Oh! This video might be private and not publi/g)
+      let private = response.data.match(/Uh-Oh! This video might be private and not publi/g)
 
       if (private) {
         res.status(404).send('This video might be private')
         return
       }
 
-      const $ = cheerio.load(response.body)
+      const $ = cheerio.load(response.data)
 
       let title = $('.card-title a').html()
 
@@ -86,7 +83,7 @@ app.post('/get-video-info', (req, res) => {
         const thumbnail = backgroundImg.match(matchBetweenParentheses)[1]
 
         const rgx = /<a href="(.+?)" target="_blank" class="btn btn-download"(.+?)>(.+?)<\/a>/g
-        let arr = [...response.body.matchAll(rgx)]
+        let arr = [...response.data.matchAll(rgx)]
         let videos = [];
 
         arr.map((item, i) => {
@@ -104,7 +101,9 @@ app.post('/get-video-info', (req, res) => {
         res.send({ videos, videoDetails: { title, thumbnails: [{ url: thumbnail }] } })
 
       }
-      else {
+
+    }).catch(async err => {
+      try {
         let option = {}
         if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
           options = {
@@ -124,9 +123,7 @@ app.post('/get-video-info', (req, res) => {
 
         await page.setViewport({ width: 1080, height: 1024 });
 
-        await page.waitForSelector('input[name="url"]', {
-          timeout: 100000
-        })
+        await page.waitForSelector('input[name="url"]')
 
         await page.type('input[name="url"]', url);
 
@@ -157,8 +154,11 @@ app.post('/get-video-info', (req, res) => {
             thumbnails: [{ url: thumbnailUrl }]
           }
         })
+      } catch (error) {
+        res.status(404).send('Link is Invalid')
       }
-    });
+
+    })
   }
 })
 
