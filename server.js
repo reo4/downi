@@ -41,124 +41,127 @@ app.get('/contact-us', (req, res) => {
   res.sendFile(path.join(__dirname, './contact-us.html'))
 })
 
-app.post('/get-video-info', (req, res) => {
-  // youtube
+app.post('/get-video-info', async (req, res) => {
   let url = req.body.url
-  if (ytdl.validateURL(url)) {
-    ytdl.getInfo(url).then((info) => {
-      let videos = ytdl.filterFormats(info.formats, 'videoandaudio');
-      let audios = ytdl.filterFormats(info.formats, 'audioonly');
+  // instagram
+  try {
+    let options = {}
+    if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+      options = {
+        args: [...chrome.args, "--hide-scrollbars", "--disable-web-security"],
+        defaultViewport: chrome.defaultViewport,
+        executablePath: await chrome.executablePath,
+        headless: true,
+        ignoreHTTPSErrors: true,
+      }
+    }
+    const browser = await puppeteer.launch(options)
+    const page = await browser.newPage();
 
-      res.send({ videos, audios, videoDetails: info.videoDetails })
+    await page.setUserAgent(userAgent.random().toString())
+
+    await page.goto('https://snapinsta.app/')
+
+    console.log(await page.content())
+
+    await page.setViewport({ width: 1080, height: 1024 });
+
+    await page.waitForSelector('input[name="url"]', {
+      timeout: 60000,
     })
-  }
-  else {
-    //fb
-    axios.post('https://www.getfvid.com/downloader', { url }).then(async function (response) {
 
-      let private = response.data.match(/Uh-Oh! This video might be private and not publi/g)
+    await page.type('input[name="url"]', url);
 
-      if (private) {
-        res.status(404).send('This video might be private')
-        return
+    const searchResultSelector = '#downloader button[type="submit"]';
+
+    await page.waitForSelector(searchResultSelector);
+
+    await page.click(searchResultSelector);
+
+    const thumbnail = await page.waitForSelector(
+      '#download .media-box img'
+    );
+    const thumbnailUrl = await thumbnail?.evaluate(el => el.getAttribute('src'));
+
+    const video = await page.waitForSelector(
+      'a[data-event="click_download_btn"]'
+    );
+
+    const videoUrl = await video?.evaluate(el => el.getAttribute('href'));
+    // console.log('The title of this blog post is "%s".', videoUrl);
+
+    await browser.close();
+
+    res.send({
+      videos: [{ url: videoUrl, qualityLabel: 'mp4' }],
+      videoDetails: {
+        title: '',
+        thumbnails: [{ url: thumbnailUrl }]
       }
-
-      const $ = cheerio.load(response.data)
-
-      let title = $('.card-title a').html()
-
-      if (title) {
-
-        title = title.split('app-').shift()
-
-        const backgroundImg = $('.img-video').css('background-image')
-
-        const matchBetweenParentheses = /\(([^)]+)\)/;
-
-        const thumbnail = backgroundImg.match(matchBetweenParentheses)[1]
-
-        const rgx = /<a href="(.+?)" target="_blank" class="btn btn-download"(.+?)>(.+?)<\/a>/g
-        let arr = [...response.data.matchAll(rgx)]
-        let videos = [];
-
-        arr.map((item, i) => {
-          if (i == 0) {
-            if (item[3].match('<strong>HD</strong>')) {
-              item[3] = "Download in HD Quality"
-            }
-          }
-          videos.push({
-            qualityLabel: item[3],
-            url: item[1].replace(/amp;/gi, '')
-          })
-        })
-
-        res.send({ videos, videoDetails: { title, thumbnails: [{ url: thumbnail }] } })
-
-      }
-
-    }).catch(async err => {
-      try {
-        let options = {}
-        if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
-          options = {
-            args: [...chrome.args, "--hide-scrollbars", "--disable-web-security"],
-            defaultViewport: chrome.defaultViewport,
-            executablePath: await chrome.executablePath,
-            headless: true,
-            ignoreHTTPSErrors: true,
-          }
-        }
-        const browser = await puppeteer.launch(options)
-        const page = await browser.newPage();
-
-        await page.setUserAgent(userAgent.random().toString())
-
-        await page.goto('https://snapinsta.app/')
-
-        console.log(await page.content())
-
-        await page.setViewport({ width: 1080, height: 1024 });
-
-        await page.waitForSelector('input[name="url"]', {
-          timeout: 60000,
-        })
-
-        await page.type('input[name="url"]', url);
-
-        const searchResultSelector = '#downloader button[type="submit"]';
-
-        await page.waitForSelector(searchResultSelector);
-
-        await page.click(searchResultSelector);
-
-        const thumbnail = await page.waitForSelector(
-          '#download .media-box img'
-        );
-        const thumbnailUrl = await thumbnail?.evaluate(el => el.getAttribute('src'));
-
-        const video = await page.waitForSelector(
-          'a[data-event="click_download_btn"]'
-        );
-
-        const videoUrl = await video?.evaluate(el => el.getAttribute('href'));
-        // console.log('The title of this blog post is "%s".', videoUrl);
-
-        await browser.close();
-
-        res.send({
-          videos: [{ url: videoUrl, qualityLabel: 'mp4' }],
-          videoDetails: {
-            title: '',
-            thumbnails: [{ url: thumbnailUrl }]
-          }
-        })
-      } catch (error) {
-        res.status(404).send(error)
-      }
-
     })
+  } catch (error) {
+    res.status(404).send(error)
   }
+
+  // youtube
+  // if (ytdl.validateURL(url)) {
+  //   ytdl.getInfo(url).then((info) => {
+  //     let videos = ytdl.filterFormats(info.formats, 'videoandaudio');
+  //     let audios = ytdl.filterFormats(info.formats, 'audioonly');
+
+  //     res.send({ videos, audios, videoDetails: info.videoDetails })
+  //   })
+  // }
+  // else {
+  //   //fb
+  //   axios.post('https://www.getfvid.com/downloader', { url }).then(async function (response) {
+
+  //     let private = response.data.match(/Uh-Oh! This video might be private and not publi/g)
+
+  //     if (private) {
+  //       res.status(404).send('This video might be private')
+  //       return
+  //     }
+
+  //     const $ = cheerio.load(response.data)
+
+  //     let title = $('.card-title a').html()
+
+  //     if (title) {
+
+  //       title = title.split('app-').shift()
+
+  //       const backgroundImg = $('.img-video').css('background-image')
+
+  //       const matchBetweenParentheses = /\(([^)]+)\)/;
+
+  //       const thumbnail = backgroundImg.match(matchBetweenParentheses)[1]
+
+  //       const rgx = /<a href="(.+?)" target="_blank" class="btn btn-download"(.+?)>(.+?)<\/a>/g
+  //       let arr = [...response.data.matchAll(rgx)]
+  //       let videos = [];
+
+  //       arr.map((item, i) => {
+  //         if (i == 0) {
+  //           if (item[3].match('<strong>HD</strong>')) {
+  //             item[3] = "Download in HD Quality"
+  //           }
+  //         }
+  //         videos.push({
+  //           qualityLabel: item[3],
+  //           url: item[1].replace(/amp;/gi, '')
+  //         })
+  //       })
+
+  //       res.send({ videos, videoDetails: { title, thumbnails: [{ url: thumbnail }] } })
+
+  //     }
+
+  //   }).catch(async err => {
+
+
+  //   })
+  // }
 })
 
 
