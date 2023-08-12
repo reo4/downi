@@ -5,7 +5,6 @@ const ytdl = require('ytdl-core');
 var userAgent = require('user-agents')
 const cheerio = require('cheerio')
 const axios = require('axios');
-const puppeteer = require('puppeteer');
 
 let chrome = {};
 
