@@ -95,7 +95,7 @@ app.post('/get-video-info', (req, res) => {
 
         const browser = await puppeteer.launch({
           args: ["--hide-scrollbars", "--disable-web-security"],
-          headless: false,
+          headless: true,
           ignoreHTTPSErrors: true,
         })
         const page = await browser.newPage();
