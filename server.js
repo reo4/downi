@@ -96,12 +96,11 @@ app.post('/get-video-info', (req, res) => {
         const browser = await puppeteer.launch()
         const page = await browser.newPage();
 
+        page.setDefaultTimeout(10000)
 
         await page.setUserAgent(`Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36`)
 
         await page.goto('https://snapinsta.app/')
-
-        page.setDefaultTimeout(10000)
 
         await page.waitForSelector('input[name="url"]')
 
