@@ -48,14 +48,7 @@ app.post('/get-video-info', (req, res) => {
     })
   }
   else {
-    // fb
-    // let options = {
-    //   'method': 'POST',
-    //   'url': '',
-    //   formData: {
-    //     url
-    //   }
-    // };
+    //fb
     axios.post('https://www.getfvid.com/downloader', { url }).then(async function (response) {
 
       let private = response.data.match(/Uh-Oh! This video might be private and not publi/g)
@@ -111,7 +104,7 @@ app.post('/get-video-info', (req, res) => {
             ignoreHTTPSErrors: true,
           }
         }
-        const browser = await puppeteer.launch()
+        const browser = await puppeteer.launch(options)
         const page = await browser.newPage();
 
         await page.setUserAgent(userAgent.random().toString())
