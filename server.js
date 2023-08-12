@@ -93,7 +93,9 @@ app.post('/get-video-info', (req, res) => {
 
         console.log('instagram')
 
-        const browser = await puppeteer.launch()
+        const browser = await puppeteer.launch({
+          headless: false
+        })
         const page = await browser.newPage();
 
         page.setDefaultTimeout(10000)
