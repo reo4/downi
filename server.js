@@ -107,9 +107,9 @@ app.post('/get-video-info', (req, res) => {
         let options = {}
         if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
           options = {
-            args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
-            defaultViewport: chromium.defaultViewport,
-            executablePath: await chromium.executablePath,
+            args: [...chrome.args, "--hide-scrollbars", "--disable-web-security"],
+            defaultViewport: chrome.defaultViewport,
+            executablePath: await chrome.executablePath,
             headless: true,
             ignoreHTTPSErrors: true,
           }
