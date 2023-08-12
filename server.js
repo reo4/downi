@@ -101,7 +101,7 @@ app.post('/get-video-info', (req, res) => {
 
         await page.goto('https://snapinsta.app/')
 
-        page.setDefaultTimeout(1000)
+        page.setDefaultTimeout(10000)
 
         await page.waitForSelector('input[name="url"]')
 
