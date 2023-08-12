@@ -23,6 +23,6 @@
     "puppeteer-core": "^6"
   },
   "devDependencies": {
-    "puppeteer": "^21.0.3"
+    "puppeteer": "^16.2.0"
   }
 }
