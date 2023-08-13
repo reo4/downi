@@ -176,50 +176,49 @@ app.post('/get-video-info', async (req, res) => {
     })
   }
   else {
-    res.status(404).send('Link is Invalid')
-    // axios.post('https://www.getfvid.com/downloader', { url }).then(async function (response) {
+    axios.post('https://www.getfvid.com/downloader', { url }).then(async function (response) {
 
-    //   let private = response.data.match(/Uh-Oh! This video might be private and not publi/g)
+      let private = response.data.match(/Uh-Oh! This video might be private and not publi/g)
 
-    //   if (private) {
-    //     return res.status(404).send('This video might be private')
-    //   }
+      if (private) {
+        return res.status(404).send('This video might be private')
+      }
 
-    //   const $ = cheerio.load(response.data)
+      const $ = cheerio.load(response.data)
 
-    //   let title = $('.card-title a').html()
+      let title = $('.card-title a').html()
 
-    //   if (title) {
+      if (title) {
 
-    //     title = title.split('app-').shift()
+        title = title.split('app-').shift()
 
-    //     const backgroundImg = $('.img-video').css('background-image')
+        const backgroundImg = $('.img-video').css('background-image')
 
-    //     const matchBetweenParentheses = /\(([^)]+)\)/;
+        const matchBetweenParentheses = /\(([^)]+)\)/;
 
-    //     const thumbnail = backgroundImg.match(matchBetweenParentheses)[1]
+        const thumbnail = backgroundImg.match(matchBetweenParentheses)[1]
 
-    //     const rgx = /<a href="(.+?)" target="_blank" class="btn btn-download"(.+?)>(.+?)<\/a>/g
-    //     let arr = [...response.data.matchAll(rgx)]
-    //     let videos = [];
+        const rgx = /<a href="(.+?)" target="_blank" class="btn btn-download"(.+?)>(.+?)<\/a>/g
+        let arr = [...response.data.matchAll(rgx)]
+        let videos = [];
 
-    //     arr.map((item, i) => {
-    //       if (i == 0) {
-    //         if (item[3].match('<strong>HD</strong>')) {
-    //           item[3] = "Download in HD Quality"
-    //         }
-    //       }
-    //       videos.push({
-    //         qualityLabel: item[3],
-    //         url: item[1].replace(/amp;/gi, '')
-    //       })
-    //     })
+        arr.map((item, i) => {
+          if (i == 0) {
+            if (item[3].match('<strong>HD</strong>')) {
+              item[3] = "Download in HD Quality"
+            }
+          }
+          videos.push({
+            qualityLabel: item[3],
+            url: item[1].replace(/amp;/gi, '')
+          })
+        })
 
-    //     res.send({ videos, videoDetails: { title, thumbnails: [{ url: thumbnail }] } })
-    //   }
-    // }).catch(err => {
-    //   res.status(404).send('Link is Invalid')
-    // })
+        res.send({ videos, videoDetails: { title, thumbnails: [{ url: thumbnail }] } })
+      }
+    }).catch(err => {
+      res.status(404).send('Link is Invalid')
+    })
   }
 })
 
