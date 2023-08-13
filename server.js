@@ -6,6 +6,9 @@ const puppeteer = require('puppeteer');
 var userAgent = require('user-agents')
 const cheerio = require('cheerio')
 const axios = require('axios');
+const https = require('https')
+const urlParser = require('url')
+
 
 app = express()
 
@@ -30,10 +33,69 @@ app.get('/contact-us', (req, res) => {
   res.sendFile(path.join(__dirname, './contact-us.html'))
 })
 
-app.post('/get-video-info', (req, res) => {
+
+app.get('/save-from-net', async (req, res) => {
+
+})
+
+app.post('/get-video-info', async (req, res) => {
   let url = req.body.url
 
-  // youtube
+  if (!url.length) {
+    return res.status(404).send('Link is Invalid')
+  }
+
+  let hostname = urlParser.parse(url, true).hostname
+
+  if (hostname === 'www.instagram.com') {
+
+    try {
+      const browser = await puppeteer.launch()
+      const page = await browser.newPage();
+
+      page.setDefaultTimeout(10000)
+
+      await page.setUserAgent(`Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36`)
+
+      await page.goto('https://snapinsta.app/')
+
+      await page.waitForSelector('input[name="url"]')
+
+      await page.type('input[name="url"]', url);
+
+      const searchResultSelector = '#downloader button[type="submit"]';
+
+      await page.waitForSelector(searchResultSelector);
+
+      await page.click(searchResultSelector);
+
+      const thumbnail = await page.waitForSelector(
+        '#download .media-box img'
+      );
+      const thumbnailUrl = await thumbnail?.evaluate(el => el.getAttribute('src'));
+
+      const video = await page.waitForSelector(
+        'a[data-event="click_download_btn"]'
+      );
+
+      const videoUrl = await video?.evaluate(el => el.getAttribute('href'));
+
+      await browser.close();
+
+      return res.send({
+        videos: [{ url: videoUrl, qualityLabel: 'mp4' }],
+        videoDetails: {
+          title: '',
+          thumbnails: [{ url: thumbnailUrl }]
+        }
+      })
+
+    } catch (error) {
+      return res.status(404).send('Link is Invalid')
+    }
+
+  }
+
   if (ytdl.validateURL(url)) {
     ytdl.getInfo(url).then((info) => {
       let videos = ytdl.filterFormats(info.formats, 'videoandaudio');
@@ -43,7 +105,6 @@ app.post('/get-video-info', (req, res) => {
     })
   }
   else {
-    //fb
     axios.post('https://www.getfvid.com/downloader', { url }).then(async function (response) {
 
       let private = response.data.match(/Uh-Oh! This video might be private and not publi/g)
@@ -84,63 +145,9 @@ app.post('/get-video-info', (req, res) => {
         })
 
         res.send({ videos, videoDetails: { title, thumbnails: [{ url: thumbnail }] } })
-
       }
-
-    }).catch(async err => {
-      // instagram
-      try {
-
-        console.log('instagram')
-
-        const browser = await puppeteer.launch({
-          args: ["--hide-scrollbars", "--disable-web-security"],
-          headless: true,
-          ignoreHTTPSErrors: true,
-        })
-        const page = await browser.newPage();
-
-        page.setDefaultTimeout(10000)
-
-        await page.setUserAgent(`Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36`)
-
-        await page.goto('https://snapinsta.app/')
-
-        await page.waitForSelector('input[name="url"]')
-
-        await page.type('input[name="url"]', url);
-
-        const searchResultSelector = '#downloader button[type="submit"]';
-
-        await page.waitForSelector(searchResultSelector);
-
-        await page.click(searchResultSelector);
-
-        const thumbnail = await page.waitForSelector(
-          '#download .media-box img'
-        );
-        const thumbnailUrl = await thumbnail?.evaluate(el => el.getAttribute('src'));
-
-        const video = await page.waitForSelector(
-          'a[data-event="click_download_btn"]'
-        );
-
-        const videoUrl = await video?.evaluate(el => el.getAttribute('href'));
-        // console.log('The title of this blog post is "%s".', videoUrl);
-
-        await browser.close();
-
-        res.send({
-          videos: [{ url: videoUrl, qualityLabel: 'mp4' }],
-          videoDetails: {
-            title: '',
-            thumbnails: [{ url: thumbnailUrl }]
-          }
-        })
-      } catch (error) {
-        res.status(404).send(error)
-      }
-
+    }).catch(err => {
+      res.status(404).send('Link is Invalid')
     })
   }
 })
