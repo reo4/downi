@@ -3,7 +3,7 @@ var path = require('path');
 var bodyParser = require('body-parser')
 const ytdl = require('ytdl-core');
 const puppeteer = require('puppeteer');
-var userAgent = require('user-agents')
+var userAgents = require('user-agents')
 const cheerio = require('cheerio')
 const axios = require('axios');
 const https = require('https')
@@ -63,7 +63,9 @@ app.post('/get-video-info', async (req, res) => {
 
       // page.setDefaultTimeout(10000)
 
-      await page.setUserAgent(`Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36`)
+      const userAgent = new userAgents()
+
+      await page.setUserAgent(userAgent.toString())
 
       await page.goto('https://savefrom.net/')
 
