@@ -42,16 +42,20 @@ app.post('/get-video-info', async (req, res) => {
 
   let hostname = urlParser.parse(url, true).hostname
 
+  console.log(hostname)
+
   if (hostname === 'www.tiktok.com' ||
-    hostname === 'www.twitter.com' ||
-    hostname === 'www.linkedin.com' ||
-    hostname === 'www.pinterest.com' ||
-    hostname === 'www.vimeo.com' ||
-    hostname === 'www.rumble.com' ||
-    hostname === 'www.ted.com' ||
-    hostname === 'www.flickr.com' ||
-    hostname === 'www.imdb.com' ||
-    hostname === 'www.reddit.com'
+    hostname === 'twitter.com' ||
+    hostname === 'www.facebook.com' ||
+    hostname === 'fb.watch' ||
+    hostname === '`vimeo.com' ||
+    hostname === 'www.dailymotion.com' ||
+    hostname === 'dai.ly'
+    // hostname === 'www.rumble.com' ||
+    // hostname === 'www.ted.com' ||
+    // hostname === 'www.flickr.com' ||
+    // hostname === 'www.imdb.com' ||
+    // hostname === 'www.reddit.com'
   ) {
     try {
       const browser = await puppeteer.launch()
@@ -61,11 +65,11 @@ app.post('/get-video-info', async (req, res) => {
 
       await page.setUserAgent(`Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36`)
 
-      await page.goto('https://savefrom.uk/')
+      await page.goto('https://savefrom.net/')
 
-      await page.waitForSelector('input[name="url"]')
+      await page.waitForSelector('input#sf_url')
 
-      await page.type('input[name="url"]', url);
+      await page.type('input#sf_url', url);
 
       const searchResultSelector = '#sf_submit';
 
@@ -74,24 +78,30 @@ app.post('/get-video-info', async (req, res) => {
       await page.click(searchResultSelector);
 
       const thumbnail = await page.waitForSelector(
-        '#sf_result .video_photo a'
+        '#sf_result .thumb-box a img'
       );
-      const thumbnailUrl = await thumbnail?.evaluate(el => el.getAttribute('href'));
+      const thumbnailUrl = await thumbnail?.evaluate(el => el.getAttribute('src'));
 
       console.log(thumbnailUrl)
 
       const video = await page.waitForSelector(
-        '#sf_result .video_files a[download]'
+        '#sf_result .link-box a[download]'
       );
 
       const videoUrl = await video?.evaluate(el => el.getAttribute('href'));
+
+      const titleS = await page.waitForSelector(
+        '#sf_result .meta div.title'
+      );
+
+      const title = await titleS?.evaluate(el => el.getAttribute('title'));
 
       await browser.close();
 
       return res.send({
         videos: [{ url: videoUrl, qualityLabel: 'mp4' }],
         videoDetails: {
-          title: '',
+          title,
           thumbnails: [{ url: thumbnailUrl }]
         }
       })
@@ -160,49 +170,50 @@ app.post('/get-video-info', async (req, res) => {
     })
   }
   else {
-    axios.post('https://www.getfvid.com/downloader', { url }).then(async function (response) {
+    res.status(404).send('Link is Invalid')
+    // axios.post('https://www.getfvid.com/downloader', { url }).then(async function (response) {
 
-      let private = response.data.match(/Uh-Oh! This video might be private and not publi/g)
+    //   let private = response.data.match(/Uh-Oh! This video might be private and not publi/g)
 
-      if (private) {
-        return res.status(404).send('This video might be private')
-      }
+    //   if (private) {
+    //     return res.status(404).send('This video might be private')
+    //   }
 
-      const $ = cheerio.load(response.data)
+    //   const $ = cheerio.load(response.data)
 
-      let title = $('.card-title a').html()
+    //   let title = $('.card-title a').html()
 
-      if (title) {
+    //   if (title) {
 
-        title = title.split('app-').shift()
+    //     title = title.split('app-').shift()
 
-        const backgroundImg = $('.img-video').css('background-image')
+    //     const backgroundImg = $('.img-video').css('background-image')
 
-        const matchBetweenParentheses = /\(([^)]+)\)/;
+    //     const matchBetweenParentheses = /\(([^)]+)\)/;
 
-        const thumbnail = backgroundImg.match(matchBetweenParentheses)[1]
+    //     const thumbnail = backgroundImg.match(matchBetweenParentheses)[1]
 
-        const rgx = /<a href="(.+?)" target="_blank" class="btn btn-download"(.+?)>(.+?)<\/a>/g
-        let arr = [...response.data.matchAll(rgx)]
-        let videos = [];
+    //     const rgx = /<a href="(.+?)" target="_blank" class="btn btn-download"(.+?)>(.+?)<\/a>/g
+    //     let arr = [...response.data.matchAll(rgx)]
+    //     let videos = [];
 
-        arr.map((item, i) => {
-          if (i == 0) {
-            if (item[3].match('<strong>HD</strong>')) {
-              item[3] = "Download in HD Quality"
-            }
-          }
-          videos.push({
-            qualityLabel: item[3],
-            url: item[1].replace(/amp;/gi, '')
-          })
-        })
+    //     arr.map((item, i) => {
+    //       if (i == 0) {
+    //         if (item[3].match('<strong>HD</strong>')) {
+    //           item[3] = "Download in HD Quality"
+    //         }
+    //       }
+    //       videos.push({
+    //         qualityLabel: item[3],
+    //         url: item[1].replace(/amp;/gi, '')
+    //       })
+    //     })
 
-        res.send({ videos, videoDetails: { title, thumbnails: [{ url: thumbnail }] } })
-      }
-    }).catch(err => {
-      res.status(404).send('Link is Invalid')
-    })
+    //     res.send({ videos, videoDetails: { title, thumbnails: [{ url: thumbnail }] } })
+    //   }
+    // }).catch(err => {
+    //   res.status(404).send('Link is Invalid')
+    // })
   }
 })
 
