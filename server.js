@@ -57,7 +57,7 @@ app.post('/get-video-info', async (req, res) => {
       const browser = await puppeteer.launch()
       const page = await browser.newPage();
 
-      page.setDefaultTimeout(10000)
+      // page.setDefaultTimeout(10000)
 
       await page.setUserAgent(`Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36`)
 
@@ -145,6 +145,7 @@ app.post('/get-video-info', async (req, res) => {
       })
 
     } catch (error) {
+      console.log(error)
       return res.status(404).send('Link is Invalid')
     }
 
