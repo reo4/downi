@@ -8,6 +8,7 @@ const cheerio = require('cheerio')
 const axios = require('axios');
 const https = require('https')
 const urlParser = require('url')
+const youtubedl = require('youtube-dl-exec')
 
 
 app = express()
@@ -34,7 +35,29 @@ app.get('/contact-us', (req, res) => {
 })
 
 
-app.get('/save-from-net', async (req, res) => {
+app.get('/dl', async (req, res) => {
+  const url = req.query.url
+
+  youtubedl(url, {
+    dumpJson: true,
+    // allFormats: true,
+    // listFormats: true,
+    format: 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio',
+    noCheckCertificates: true,
+    noWarnings: true,
+    mergeOutputFormat: 'mp4',
+    addHeader: [
+      'user-agent:googlebot'
+    ]
+
+  })
+    .then(output => {
+
+      res.send(output)
+      // res.send({ videos, audios, videoDetails: { title: output.title, thumbnail: output.thumbnail } })
+    })
+    .catch(err => { res.send(err) })
+
 
 })
 
@@ -46,6 +69,67 @@ app.post('/get-video-info', async (req, res) => {
   }
 
   let hostname = urlParser.parse(url, true).hostname
+
+  if (hostname === 'www.tiktok.com' ||
+    hostname === 'www.twitter.com' ||
+    hostname === 'www.linkedin.com' ||
+    hostname === 'www.pinterest.com' ||
+    hostname === 'www.vimeo.com' ||
+    hostname === 'www.rumble.com' ||
+    hostname === 'www.ted.com' ||
+    hostname === 'www.flickr.com' ||
+    hostname === 'www.imdb.com' ||
+    hostname === 'www.reddit.com'
+  ) {
+    try {
+      const browser = await puppeteer.launch({
+        headless: false
+      })
+      const page = await browser.newPage();
+
+      page.setDefaultTimeout(10000)
+
+      await page.setUserAgent(`Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36`)
+
+      await page.goto('https://savefrom.uk/')
+
+      await page.waitForSelector('input[name="url"]')
+
+      await page.type('input[name="url"]', url);
+
+      const searchResultSelector = '#sf_submit';
+
+      await page.waitForSelector(searchResultSelector);
+
+      await page.click(searchResultSelector);
+
+      const thumbnail = await page.waitForSelector(
+        '#sf_result .video_photo a'
+      );
+      const thumbnailUrl = await thumbnail?.evaluate(el => el.getAttribute('href'));
+
+      console.log(thumbnailUrl)
+
+      const video = await page.waitForSelector(
+        '#sf_result .video_files a[download]'
+      );
+
+      const videoUrl = await video?.evaluate(el => el.getAttribute('href'));
+
+      await browser.close();
+
+      return res.send({
+        videos: [{ url: videoUrl, qualityLabel: 'mp4' }],
+        videoDetails: {
+          title: '',
+          thumbnails: [{ url: thumbnailUrl }]
+        }
+      })
+
+    } catch (error) {
+      return res.status(404).send('Link is Invalid')
+    }
+  }
 
   if (hostname === 'www.instagram.com') {
 
