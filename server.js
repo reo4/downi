@@ -67,7 +67,7 @@ app.post('/get-video-info', async (req, res) => {
 
       await page.setUserAgent(userAgent.toString())
 
-      await page.goto('https://savefrom.net/')
+      await page.goto('https://en.savefrom.net/391GA/')
 
       await page.waitForSelector('input#sf_url')
 
