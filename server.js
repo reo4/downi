@@ -69,9 +69,11 @@ app.post('/get-video-info', async (req, res) => {
 
       await page.goto('https://en.savefrom.net/391GA/')
 
-      await page.waitForSelector('input#sf_url')
+      await page.waitForSelector('input[name="sf_url"]')
 
-      await page.type('input#sf_url', url);
+      await page.type('input[name="sf_url"]', url);
+
+      console.log(await page.content())
 
       const searchResultSelector = '#sf_submit';
 
