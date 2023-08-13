@@ -54,9 +54,7 @@ app.post('/get-video-info', async (req, res) => {
     hostname === 'www.reddit.com'
   ) {
     try {
-      const browser = await puppeteer.launch({
-        headless: false
-      })
+      const browser = await puppeteer.launch()
       const page = await browser.newPage();
 
       page.setDefaultTimeout(10000)
