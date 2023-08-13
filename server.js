@@ -110,8 +110,7 @@ app.post('/get-video-info', async (req, res) => {
       let private = response.data.match(/Uh-Oh! This video might be private and not publi/g)
 
       if (private) {
-        res.status(404).send('This video might be private')
-        return
+        return res.status(404).send('This video might be private')
       }
 
       const $ = cheerio.load(response.data)
