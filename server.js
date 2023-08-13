@@ -44,13 +44,13 @@ app.post('/get-video-info', async (req, res) => {
 
   console.log(hostname)
 
-  if (hostname === 'www.tiktok.com' ||
-    hostname === 'twitter.com' ||
-    hostname === 'www.facebook.com' ||
-    hostname === 'fb.watch' ||
-    hostname === 'vimeo.com' ||
-    hostname === 'www.dailymotion.com' ||
-    hostname === 'dai.ly'
+  if (hostname === 'www.tiktok.com'
+    // hostname === 'twitter.com' ||
+    // hostname === 'www.facebook.com' ||
+    // hostname === 'fb.watch' ||
+    // hostname === 'vimeo.com' ||
+    // hostname === 'www.dailymotion.com' ||
+    // hostname === 'dai.ly'
     // hostname === 'www.rumble.com' ||
     // hostname === 'www.ted.com' ||
     // hostname === 'www.flickr.com' ||
@@ -67,39 +67,39 @@ app.post('/get-video-info', async (req, res) => {
 
       await page.setUserAgent(userAgent.toString())
 
-      await page.goto('https://en.savefrom.net/391GA/')
+      await page.goto('https://savetik.co/en')
 
       console.log(await page.content())
 
-      await page.waitForSelector('input[name="sf_url"]')
+      await page.waitForSelector('input#s_input')
 
-      await page.type('input[name="sf_url"]', url);
+      await page.type('input#s_input', url);
 
 
-      const searchResultSelector = '#sf_submit';
+      const searchResultSelector = '#search-form button';
 
       await page.waitForSelector(searchResultSelector);
 
       await page.click(searchResultSelector);
 
       const thumbnail = await page.waitForSelector(
-        '#sf_result .thumb-box a img'
+        '#search-result .thumbnail img'
       );
       const thumbnailUrl = await thumbnail?.evaluate(el => el.getAttribute('src'));
 
       console.log(thumbnailUrl)
 
       const video = await page.waitForSelector(
-        '#sf_result .link-box a[download]'
+        '#search-result .dl-action a'
       );
 
       const videoUrl = await video?.evaluate(el => el.getAttribute('href'));
 
       const titleS = await page.waitForSelector(
-        '#sf_result .meta div.title'
+        '#search-result .content h3'
       );
 
-      const title = await titleS?.evaluate(el => el.getAttribute('title'));
+      const title = await titleS?.evaluate(el => el.innerHTML);
 
       await browser.close();
 
