@@ -25,7 +25,6 @@
     "puppeteer-core": "^6.0.0",
     "user-agents": "^1.0.1444",
     "util": "^0.12.5",
-    "youtube-dl-exec": "^2.4.7",
     "ytdl-core": "^4.11.5"
   },
   "devDependencies": {

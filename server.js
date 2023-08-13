@@ -8,7 +8,6 @@ const cheerio = require('cheerio')
 const axios = require('axios');
 const https = require('https')
 const urlParser = require('url')
-const youtubedl = require('youtube-dl-exec')
 
 
 app = express()
@@ -32,33 +31,6 @@ app.get('/terms-of-use', (req, res) => {
 })
 app.get('/contact-us', (req, res) => {
   res.sendFile(path.join(__dirname, './contact-us.html'))
-})
-
-
-app.get('/dl', async (req, res) => {
-  const url = req.query.url
-
-  youtubedl(url, {
-    dumpJson: true,
-    // allFormats: true,
-    // listFormats: true,
-    format: 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio',
-    noCheckCertificates: true,
-    noWarnings: true,
-    mergeOutputFormat: 'mp4',
-    addHeader: [
-      'user-agent:googlebot'
-    ]
-
-  })
-    .then(output => {
-
-      res.send(output)
-      // res.send({ videos, audios, videoDetails: { title: output.title, thumbnail: output.thumbnail } })
-    })
-    .catch(err => { res.send(err) })
-
-
 })
 
 app.post('/get-video-info', async (req, res) => {
