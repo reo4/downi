@@ -48,7 +48,7 @@ app.post('/get-video-info', async (req, res) => {
     hostname === 'twitter.com' ||
     hostname === 'www.facebook.com' ||
     hostname === 'fb.watch' ||
-    hostname === '`vimeo.com' ||
+    hostname === 'vimeo.com' ||
     hostname === 'www.dailymotion.com' ||
     hostname === 'dai.ly'
     // hostname === 'www.rumble.com' ||
