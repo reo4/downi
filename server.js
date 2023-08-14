@@ -61,8 +61,6 @@ app.post('/get-video-info', async (req, res) => {
       const browser = await puppeteer.launch({ headless: true, waitForInitialPage: false })
       const page = await browser.newPage();
 
-      // page.setDefaultTimeout(10000)
-
       const userAgent = new userAgents()
 
       await page.setUserAgent(userAgent.toString())
@@ -120,8 +118,6 @@ app.post('/get-video-info', async (req, res) => {
       const browser = await puppeteer.launch()
       const page = await browser.newPage();
 
-      // page.setDefaultTimeout(10000)
-
       await page.setUserAgent(`Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36`)
 
       await page.goto('https://snapinsta.app/')
@@ -175,12 +171,6 @@ app.post('/get-video-info', async (req, res) => {
   else {
     axios.post('https://www.getfvid.com/downloader', { url }).then(async function (response) {
 
-      let private = response.data.match(/Uh-Oh! This video might be private and not publi/g)
-
-      if (private) {
-        return res.status(404).send('This video might be private')
-      }
-
       const $ = cheerio.load(response.data)
 
       let title = $('.card-title a').html()
@@ -213,8 +203,55 @@ app.post('/get-video-info', async (req, res) => {
 
         res.send({ videos, videoDetails: { title, thumbnails: [{ url: thumbnail }] } })
       }
-    }).catch(err => {
-      res.status(404).send('Link is Invalid')
+      else {
+        throw new Error()
+      }
+    }).catch(async err => {
+
+      try {
+        console.log('here')
+        const browser = await puppeteer.launch()
+        const page = await browser.newPage();
+
+        await page.setUserAgent(`Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36`)
+
+        await page.goto('https://fdownloader.net/en')
+
+        await page.waitForSelector('input#s_input')
+
+        await page.type('input#s_input', url);
+
+        const searchResultSelector = '#search-form button';
+
+        await page.waitForSelector(searchResultSelector);
+
+        await page.click(searchResultSelector);
+
+        const thumbnail = await page.waitForSelector(
+          '#search-result .image-fb img'
+        );
+        const thumbnailUrl = await thumbnail?.evaluate(el => el.getAttribute('src'));
+
+        const video = await page.waitForSelector(
+          '#fbdownloader a.download-link-fb'
+        );
+
+        const videoUrl = await video?.evaluate(el => el.getAttribute('href'));
+
+        await browser.close();
+
+        return res.send({
+          videos: [{ url: videoUrl, qualityLabel: 'mp4' }],
+          videoDetails: {
+            title: '',
+            thumbnails: [{ url: thumbnailUrl }]
+          }
+        })
+
+      } catch (error) {
+        console.log(error)
+        return res.status(404).send('Link is Invalid')
+      }
     })
   }
 })
