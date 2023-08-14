@@ -14,7 +14,22 @@ const getVideoInfo = () => {
 
   let url = $('#url-input').val()
 
+  let value = 0
+
+  $('.progress-bar').show()
+
+  const progress = () => {
+    value = (value + (Math.random() * 10))
+    $('.progress-bar').css('width', value + '%')
+  }
+
+  const myInter = setInterval(progress, 1000)
+
   $.post('/get-video-info', { url }).then(({ videos, audios, videoDetails }) => {
+
+    clearInterval(myInter)
+
+    $('.progress-bar').css('width', '90%')
 
     $('#error-section').hide()
     toggleLoadingState()
@@ -45,6 +60,10 @@ const getVideoInfo = () => {
         </a>
       `)
     }
+    setTimeout(() => {
+      $('.progress-bar').hide()
+      $('.progress-bar').css('width', '0%')
+    }, 1000)
 
   }).catch(err => {
     console.log(err)
