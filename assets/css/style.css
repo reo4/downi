@@ -93,7 +93,7 @@ button {
   background-color: #a47eff;
   box-shadow: 0px 0px 20px 1px #6425f8c9;
   position: absolute;
-  bottom: 3px;
+  bottom: 4px;
   border-radius: 7px;
   transition: all 0.5s;
 }
