@@ -84,7 +84,7 @@ app.post('/get-video-info', async (req, res) => {
       const thumbnailUrl = await thumbnail?.evaluate(el => el.getAttribute('src'));
 
       const video = await page.waitForSelector(
-        '#search-result a'
+        '#search-result .dl-action a'
       );
 
       const videoUrl = await video?.evaluate(el => el.getAttribute('href'));
