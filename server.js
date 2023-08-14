@@ -75,7 +75,6 @@ app.post('/get-video-info', async (req, res) => {
 
       await page.type('input#s_input', url);
 
-
       const searchResultSelector = '#search-form button';
 
       await page.waitForSelector(searchResultSelector);
@@ -86,8 +85,6 @@ app.post('/get-video-info', async (req, res) => {
         '#search-result .thumbnail img'
       );
       const thumbnailUrl = await thumbnail?.evaluate(el => el.getAttribute('src'));
-
-      console.log(thumbnailUrl)
 
       const video = await page.waitForSelector(
         '#search-result .dl-action a'
