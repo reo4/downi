@@ -68,6 +68,10 @@ const getVideoInfo = () => {
   }).catch(err => {
     console.log(err)
     if (err.status == 404) {
+      setTimeout(() => {
+        $('.progress-bar').hide()
+        $('.progress-bar').css('width', '0%')
+      }, 1000)
       $('#video-download').removeClass('show')
       $('#error-section').show()
       toggleLoadingState()
