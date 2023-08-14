@@ -85,7 +85,7 @@ app.post('/get-video-info', async (req, res) => {
       const thumbnailUrl = await thumbnail?.evaluate(el => el.getAttribute('src'));
 
       const video = await page.waitForSelector(
-        '#search-result .dl-action a'
+        '#search-result .tik-button-dl'
       );
 
       const videoUrl = await video?.evaluate(el => el.getAttribute('href'));
