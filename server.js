@@ -6,7 +6,6 @@ const puppeteer = require('puppeteer');
 var userAgents = require('user-agents')
 const cheerio = require('cheerio')
 const axios = require('axios');
-const https = require('https')
 const urlParser = require('url')
 
 
@@ -44,6 +43,7 @@ app.post('/get-video-info', async (req, res) => {
 
   console.log(hostname)
 
+  // tiktok
   if (hostname === 'www.tiktok.com'
     // hostname === 'twitter.com' ||
     // hostname === 'www.facebook.com' ||
@@ -58,7 +58,7 @@ app.post('/get-video-info', async (req, res) => {
     // hostname === 'www.reddit.com'
   ) {
     try {
-      const browser = await puppeteer.launch()
+      const browser = await puppeteer.launch({ headless: true, waitForInitialPage: false })
       const page = await browser.newPage();
 
       // page.setDefaultTimeout(10000)
