@@ -67,7 +67,6 @@ app.post('/get-video-info', async (req, res) => {
 
       await page.goto('https://savetik.co/en')
 
-      console.log(await page.content())
 
       await page.waitForSelector('input#s_input')
 
@@ -89,6 +88,8 @@ app.post('/get-video-info', async (req, res) => {
       );
 
       const videoUrl = await video?.evaluate(el => el.getAttribute('href'));
+
+      console.log(videoUrl)
 
       const titleS = await page.waitForSelector(
         '#search-result .content h3'
