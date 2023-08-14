@@ -78,6 +78,7 @@ button {
 .supported-websites a {
   display: inline-block;
   margin: 0 3px;
+  cursor: default;
 }
 
 .url-input-wrapper {
