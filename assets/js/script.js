@@ -23,7 +23,7 @@ const getVideoInfo = () => {
     $('.progress-bar').css('width', value + '%')
   }
 
-  const myInter = setInterval(progress, 3000)
+  const myInter = setInterval(progress, 2500)
 
   $.post('/get-video-info', { url }).then(({ videos, audios, videoDetails }) => {
 
