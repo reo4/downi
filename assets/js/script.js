@@ -19,7 +19,7 @@ const getVideoInfo = () => {
   $('.progress-bar').show()
 
   const progress = () => {
-    value = (value + (Math.random() * 10))
+    value = (value + (Math.random() * 15))
     $('.progress-bar').css('width', value + '%')
   }
 
