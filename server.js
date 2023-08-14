@@ -83,13 +83,23 @@ app.post('/get-video-info', async (req, res) => {
       );
       const thumbnailUrl = await thumbnail?.evaluate(el => el.getAttribute('src'));
 
-      const video = await page.waitForSelector(
-        '#search-result .dl-action a'
-      );
+      let video;
+
+      try {
+        const convertBtn = await page.waitForSelector('#search-result .dl-action a', {
+          timeout: 10000
+        })
+
+        await page.click(convertBtn)
+
+        video = convertBtn
+
+      } catch (error) {
+        video = await page.waitForSelector('#search-result .dl-action a');
+      }
 
       const videoUrl = await video?.evaluate(el => el.getAttribute('href'));
 
-      console.log(videoUrl)
 
       const titleS = await page.waitForSelector(
         '#search-result .content h3'
