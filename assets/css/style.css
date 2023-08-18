@@ -229,6 +229,10 @@ button {
   text-align: center;
 }
 
+.steps-section .img img {
+  max-width: 100%;
+}
+
 #contact-us form {
   margin-left: 70px;
 }
