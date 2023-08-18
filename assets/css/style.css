@@ -227,10 +227,11 @@ button {
 
 .steps-section .img {
   text-align: center;
+  margin-top: 30px;
 }
 
 .steps-section .img img {
-  max-width: 100%;
+  /* max-width: 100%; */
 }
 
 #contact-us form {
@@ -278,7 +279,7 @@ footer .footer-wrapper {
 }
 
 iframe {
-  margin: 40px 0;
+  margin-top: 40px;
   padding: 0 2px;
   box-sizing: border-box;
 }
