@@ -105,8 +105,3 @@ clearBtn.on('click', e => {
   input.val('')
   clearBtn.hide()
 })
-
-// $('#video-download .formats-box').on('click', '.quality-btn', (e) => {
-//   let url = $(e.target).attr('url')
-//   $.get(`/download?url=${url}`)
-// })

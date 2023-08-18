@@ -44,8 +44,7 @@ app.post('/get-video-info', async (req, res) => {
   console.log(hostname)
 
   // tiktok
-  if (hostname === 'www.tiktok.com' ||
-    hostname === 'vm.tiktok.com'
+  if (hostname === 'www.tiktok.com' || hostname === 'vm.tiktok.com'
     // hostname === 'www.facebook.com' ||
     // hostname === 'fb.watch' ||
     // hostname === 'vimeo.com' ||

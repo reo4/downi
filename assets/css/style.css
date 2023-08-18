@@ -15,7 +15,9 @@ a {
 }
 
 h1,
-h2 {
+h2,
+h3,
+h4 {
   color: #495f77;
 }
 
@@ -216,6 +218,15 @@ button {
 .features {
   margin-top: 70px;
   margin-bottom: 100px;
+}
+
+.steps-section {
+  /* margin-top: 70px; */
+  margin-bottom: 100px;
+}
+
+.steps-section .img {
+  text-align: center;
 }
 
 #contact-us form {
