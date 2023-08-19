@@ -44,18 +44,7 @@ app.post('/get-video-info', async (req, res) => {
   console.log(hostname)
 
   // tiktok
-  if (hostname === 'www.tiktok.com' || hostname === 'vm.tiktok.com'
-    // hostname === 'www.facebook.com' ||
-    // hostname === 'fb.watch' ||
-    // hostname === 'vimeo.com' ||
-    // hostname === 'www.dailymotion.com' ||
-    // hostname === 'dai.ly'
-    // hostname === 'www.rumble.com' ||
-    // hostname === 'www.ted.com' ||
-    // hostname === 'www.flickr.com' ||
-    // hostname === 'www.imdb.com' ||
-    // hostname === 'www.reddit.com'
-  ) {
+  if (hostname === 'www.tiktok.com' || hostname === 'vm.tiktok.com') {
     try {
       const browser = await puppeteer.launch({ headless: true, waitForInitialPage: false })
       const page = await browser.newPage();
@@ -266,6 +255,7 @@ app.post('/get-video-info', async (req, res) => {
       }
     })
   }
+
 })
 
 
