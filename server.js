@@ -8,7 +8,6 @@ const cheerio = require('cheerio')
 const axios = require('axios');
 const urlParser = require('url')
 
-
 app = express()
 
 app.use('/assets', express.static(path.join(__dirname, './assets')))
@@ -257,9 +256,6 @@ app.post('/get-video-info', async (req, res) => {
   }
 
 })
-
-
-
 
 var port = process.env.PORT || 5000
 app.listen(port)

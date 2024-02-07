@@ -14,21 +14,7 @@ const getVideoInfo = () => {
 
   let url = $('#url-input').val()
 
-  // let value = 0
-
-  // const progress = () => {
-  //   $('.progress-bar').show()
-  //   value = (value + (Math.random() * 15))
-  //   $('.progress-bar').css('width', value + '%')
-  // }
-
-  // const myInter = setInterval(progress, 2500)
-
   $.post('/get-video-info', { url }).then(({ videos, audios, videoDetails }) => {
-
-    // clearInterval(myInter)
-
-    // $('.progress-bar').css('width', '90%')
 
     $('#error-section').hide()
     toggleLoadingState()
@@ -59,19 +45,10 @@ const getVideoInfo = () => {
         </a>
       `)
     }
-    setTimeout(() => {
-      $('.progress-bar').hide()
-      $('.progress-bar').css('width', '0%')
-    }, 1000)
 
   }).catch(err => {
     console.log(err)
     if (err.status == 404) {
-
-      // clearInterval(myInter)
-      // $('.progress-bar').hide()
-      // $('.progress-bar').css('width', '0%')
-
       $('#video-download').removeClass('show')
       $('#error-section').show()
       toggleLoadingState()
