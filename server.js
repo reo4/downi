@@ -7,6 +7,9 @@ var userAgents = require('user-agents')
 const cheerio = require('cheerio')
 const axios = require('axios');
 const urlParser = require('url')
+var cors = require("cors");
+
+app.use(cors());
 
 app = express()
 
