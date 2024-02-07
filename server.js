@@ -9,9 +9,9 @@ const axios = require('axios');
 const urlParser = require('url')
 var cors = require("cors");
 
-app.use(cors());
-
 app = express()
+
+app.use(cors());
 
 app.use('/assets', express.static(path.join(__dirname, './assets')))
 app.use(bodyParser.urlencoded({ extended: false }))
